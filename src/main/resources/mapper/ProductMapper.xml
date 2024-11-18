@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.PhoneStore.dao.ProductMapper">
+
+    <select id="getAllProduct" resultType="com.example.PhoneStore.domain.response.ResponseProduct">
+        SELECT
+            productID,
+            categoryID,
+            productName,
+            image,
+            description,
+            price,
+            stock,
+            status
+        FROM Product
+        ORDER BY productID DESC
+    </select>
+
+    <select id="getProductByID" resultType="com.example.PhoneStore.domain.response.ResponseProduct">
+        SELECT
+            productID,
+            categoryID,
+            productName,
+            image,
+            description,
+            price,
+            stock,
+            status
+        FROM Product
+        Where productID = #{productID}
+    </select>
+
+    <select id="getProductByCategoryID" resultType="com.example.PhoneStore.domain.response.ResponseProduct">
+        SELECT
+            productID,
+            categoryID,
+            productName,
+            image,
+            description,
+            price,
+            stock,
+            status
+        FROM Product
+        Where categoryID = #{categoryID}
+        ORDER BY productID DESC
+    </select>
+
+    <select id="getPromotionOfProduct" resultType="com.example.PhoneStore.domain.response.ResponsePromotion">
+        SELECT
+            productID,
+            promotionDescription,
+            discountValue,
+            startDate,
+            endDate,
+           isActive
+        FROM Promotion
+        Where productID = #{productID}
+    </select>
+
+    <select id="getInstallmentPlanOfProduct" resultType="com.example.PhoneStore.domain.response.ResponseInstallmentPlan">
+        SELECT
+            productID,
+            planName,
+            price,
+            durationMonths,
+            interestRate,
+            downPayment,
+            monthlyPayment,
+            totalAmount,
+            startDate,
+            endDate,
+            isActive
+        FROM InstallmentPlan
+        Where productID = #{productID}
+    </select>
+
+    <select id="getColorOfProduct" resultType="com.example.PhoneStore.domain.response.ResponseProductColor">
+        SELECT
+            productColorID,
+            productID,
+            colorName,
+            colorHex,
+            imagePath
+        FROM ProductColor
+        Where productID = #{productID}
+    </select>
+
+    <select id="getSpecificationOfProduct" resultType="com.example.PhoneStore.domain.response.ResponseProductSpecification">
+        SELECT
+            productID,
+            specName,
+            specValue
+        FROM ProductSpecification
+        Where productID = #{productID}
+    </select>
+
+    <select id="getBanner" resultType="com.example.PhoneStore.domain.response.ResponseBanner">
+        SELECT
+            bannerID,
+            imageURL,
+            description,
+            startDate,
+            endDate,
+            isActive
+        FROM Banner
+        ORDER BY bannerID DESC
+    </select>
+
+    <select id="getCustomerVisitImage" resultType="com.example.PhoneStore.domain.response.ResponseCustomerVisitImage">
+        SELECT
+            customerImageID,
+            imageURL,
+            createdAt
+        FROM CustomerVisitImage
+        ORDER BY customerImageID DESC
+    </select>
+
+    <select id="getProductStorage" resultType="com.example.PhoneStore.domain.response.ResponseStorage">
+        SELECT
+            PS.productStorageID,
+            storageCapacity
+        FROM ProductStorage PS, ProductVariant PV
+        WHERE PS.productStorageID = PV.productStorageID AND productID=#{productID}
+    </select>
+
+    <select id="getProductVariant" resultType="com.example.PhoneStore.domain.response.ResponseProductVariant">
+        SELECT
+            variantID,
+            productID,
+            productColorID,
+            productStorageID,
+            price,
+            stock
+        FROM ProductVariant
+        WHERE productID=#{productID} AND productColorID=#{productColorID} AND productStorageID=#{productStorageID}
+    </select>
+
+    <insert id="insertCustomer" keyProperty="customerID">
+        INSERT INTO Customer (fullName, phone)
+        VALUES (#{fullName}, #{phone})
+    </insert>
+
+    <select id="getLastInsertedCustomerID" resultType="int">
+        SELECT MAX(customerID) FROM Customer
+    </select>
+
+    <insert id="insertOrder" keyProperty="orderID">
+        INSERT INTO `Order` (customerID, orderDate, totalAmount)
+        VALUES (#{customerID}, #{orderDate}, #{totalAmount})
+    </insert>
+
+    <select id="getLastInsertedOrderID" resultType="int">
+        SELECT MAX(orderID) FROM `Order`
+    </select>
+
+    <insert id="insertOrderDetail" keyProperty="orderDetailID">
+        INSERT INTO `OrderDetail` (orderID, productID, priceAtOrder)
+        VALUES (#{orderID}, #{productID}, #{priceAtOrder})
+    </insert>
+
+</mapper>
