@@ -13,6 +13,8 @@ public interface ProductService {
 
     List<ResponseProduct> getProductByCategoryID(int categoryID);
 
+    List<ResponseProduct> getProductByName(String productName);
+
     List<ResponsePromotion> getPromotionOfProduct(int productID);
     List<ResponseInstallmentPlan> getInstallmentPlanOfProduct(int productID);
 

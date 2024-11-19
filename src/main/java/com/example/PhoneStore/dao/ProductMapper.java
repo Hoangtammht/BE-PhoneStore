@@ -12,7 +12,11 @@ public interface ProductMapper {
 
     ResponseProduct getProductByID(int productID);
 
+    ResponseProductOrder getProductByOrderID(String orderID);
+
     List<ResponseProduct> getProductByCategoryID(int productID);
+
+    List<ResponseProduct> getProductByName(String productName);
     List<ResponsePromotion> getPromotionOfProduct(int productID);
     List<ResponseInstallmentPlan> getInstallmentPlanOfProduct(int productID);
 
@@ -27,14 +31,14 @@ public interface ProductMapper {
 
     ResponseProductVariant getProductVariant(int productID, int productColorID, int productStorageID);
 
-    void insertCustomer(String fullName, String phone);
+    void insertCustomer(String customerID, String fullName, String phone);
 
-    int getLastInsertedCustomerID();
+    int getCustomerByID(String customerID);
 
-    void insertOrder(int customerID, String orderDate, double totalAmount);
+    void insertOrder(String orderID, String customerID, String orderDate, double totalAmount);
 
     int getLastInsertedOrderID();
 
-    void insertOrderDetail(int orderID, int productID, double priceAtOrder);
+    void insertOrderDetail(String orderDetailID, String orderID, int productID, int variantID, double priceAtOrder);
 
 }

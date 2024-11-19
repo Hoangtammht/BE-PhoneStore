@@ -83,26 +83,22 @@ public class ProductImpl implements ProductService {
     @Override
     @Transactional
     public void createOrder(RequestOrder requestOrder) {
-        // Insert customer and retrieve the customer ID
-        productMapper.insertCustomer(requestOrder.getFullName(), requestOrder.getPhone());
-        Integer customerID = productMapper.getLastInsertedCustomerID();
-
+        productMapper.insertCustomer(requestOrder.getCustomerID(), requestOrder.getFullName(), requestOrder.getPhone());
 
         if (requestOrder.getOrderDate() == null || requestOrder.getOrderDate().isEmpty()) {
             requestOrder.setOrderDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
 
-        productMapper.insertOrder(customerID, requestOrder.getOrderDate(), requestOrder.getTotalAmount());
-        Integer orderID = productMapper.getLastInsertedOrderID();
+        productMapper.insertOrder(requestOrder.getOrderID(), requestOrder.getCustomerID(), requestOrder.getOrderDate(), requestOrder.getTotalAmount());
 
-        productMapper.insertOrderDetail(orderID, requestOrder.getProductID(), requestOrder.getPriceAtOrder());
+        productMapper.insertOrderDetail(requestOrder.getOrderDetailID(), requestOrder.getOrderID(), requestOrder.getProductID(), requestOrder.getVariantID(),requestOrder.getPriceAtOrder());
 
         sendOrderNotificationEmail(requestOrder);
     }
 
     private void sendOrderNotificationEmail(RequestOrder requestOrder) {
         SimpleMailMessage email = new SimpleMailMessage();
-        ResponseProduct product = productMapper.getProductByID(requestOrder.getProductID());
+        ResponseProductOrder product = productMapper.getProductByOrderID(requestOrder.getOrderID());
         email.setTo("hoangtammht@gmail.com");
         email.setSubject("New Order Received");
         email.setText("You have received a new order.\n\n" +
@@ -110,9 +106,15 @@ public class ProductImpl implements ProductService {
                 "Full Name: " + requestOrder.getFullName() + "\n" +
                 "Phone: " + requestOrder.getPhone() + "\n" +
                 "Product Name: " + product.getProductName() + "\n" +
+                "Color: " + product.getColorName() + "\n" +
+                "Storage: " + product.getStorageCapacity() + "\n" +
                 "Order Date: " + requestOrder.getOrderDate() + "\n" +
                 "Total Amount: " + requestOrder.getTotalAmount());
         mailSender.send(email);
     }
 
+    @Override
+    public List<ResponseProduct> getProductByName(String productName) {
+        return productMapper.getProductByName(productName);
+    }
 }

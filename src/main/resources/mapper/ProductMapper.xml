@@ -48,6 +48,20 @@
         ORDER BY productID DESC
     </select>
 
+    <select id="getProductByName" resultType="com.example.PhoneStore.domain.response.ResponseProduct">
+        SELECT
+        productID,
+        categoryID,
+        productName,
+        image,
+        description,
+        price,
+        stock,
+        status
+        FROM Product
+        WHERE productName LIKE CONCAT('%', #{productName}, '%')
+    </select>
+
     <select id="getPromotionOfProduct" resultType="com.example.PhoneStore.domain.response.ResponsePromotion">
         SELECT
             productID,
@@ -138,9 +152,25 @@
         WHERE productID=#{productID} AND productColorID=#{productColorID} AND productStorageID=#{productStorageID}
     </select>
 
+    <select id="getProductByOrderID" resultType="com.example.PhoneStore.domain.response.ResponseProductOrder">
+        SELECT
+        o.orderID,
+        p.productName,
+        pc.colorName,
+        ps.storageCapacity
+        FROM
+        OrderDetail od
+        JOIN `Order` o ON od.orderID = o.orderID
+        JOIN ProductVariant pv ON od.variantID = pv.variantID
+        JOIN Product p ON pv.productID = p.productID
+        JOIN ProductColor pc ON pv.productColorID = pc.productColorID
+        JOIN ProductStorage ps ON pv.productStorageID = ps.productStorageID
+        WHERE o.orderID = #{orderID};
+    </select>
+
     <insert id="insertCustomer" keyProperty="customerID">
-        INSERT INTO Customer (fullName, phone)
-        VALUES (#{fullName}, #{phone})
+        INSERT INTO Customer (customerID, fullName, phone)
+        VALUES (#{customerID}, #{fullName}, #{phone})
     </insert>
 
     <select id="getLastInsertedCustomerID" resultType="int">
@@ -148,8 +178,8 @@
     </select>
 
     <insert id="insertOrder" keyProperty="orderID">
-        INSERT INTO `Order` (customerID, orderDate, totalAmount)
-        VALUES (#{customerID}, #{orderDate}, #{totalAmount})
+        INSERT INTO `Order` (orderID, customerID, orderDate, totalAmount)
+        VALUES (#{orderID}, #{customerID}, #{orderDate}, #{totalAmount})
     </insert>
 
     <select id="getLastInsertedOrderID" resultType="int">
@@ -157,8 +187,8 @@
     </select>
 
     <insert id="insertOrderDetail" keyProperty="orderDetailID">
-        INSERT INTO `OrderDetail` (orderID, productID, priceAtOrder)
-        VALUES (#{orderID}, #{productID}, #{priceAtOrder})
+        INSERT INTO `OrderDetail` (orderDetailID, orderID, productID, variantID, priceAtOrder)
+        VALUES (#{orderDetailID}, #{orderID}, #{productID}, #{variantID}, #{priceAtOrder})
     </insert>
 
 </mapper>

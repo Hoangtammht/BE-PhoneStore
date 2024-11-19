@@ -50,6 +50,16 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/getProductByName")
+    public ResponseEntity<List<ResponseProduct>> getProductByName(@RequestParam String productName) {
+        try {
+            List<ResponseProduct> product = productService.getProductByName(productName);
+            return ResponseEntity.ok(product);
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+
     @GetMapping("/getPromotionOfProduct")
     public ResponseEntity<List<ResponsePromotion>> getPromotionOfProduct(@RequestParam int productID) {
         try {
