@@ -13,7 +13,6 @@
             image,
             description,
             price,
-            stock,
             status
         FROM Product
         ORDER BY productID DESC
@@ -27,7 +26,6 @@
             image,
             description,
             price,
-            stock,
             status
         FROM Product
         Where productID = #{productID}
@@ -41,11 +39,11 @@
             image,
             description,
             price,
-            stock,
-            status
+            status,
+            createAt
         FROM Product
         Where categoryID = #{categoryID}
-        ORDER BY productID DESC
+        ORDER BY createAt DESC
     </select>
 
     <select id="getProductByName" resultType="com.example.PhoneStore.domain.response.ResponseProduct">
@@ -56,7 +54,6 @@
         image,
         description,
         price,
-        stock,
         status
         FROM Product
         WHERE productName LIKE CONCAT('%', #{productName}, '%')
@@ -76,19 +73,27 @@
 
     <select id="getInstallmentPlanOfProduct" resultType="com.example.PhoneStore.domain.response.ResponseInstallmentPlan">
         SELECT
-            productID,
-            planName,
-            price,
-            durationMonths,
-            interestRate,
-            downPayment,
-            monthlyPayment,
-            totalAmount,
-            startDate,
-            endDate,
-            isActive
+        installmentPlanID,
+        productID,
+        variantID,
+        planName,
+        price,
+        durationMonths,
+        interestRate,
+        downPayment,
+        monthlyPayment,
+        totalAmount,
+        startDate,
+        endDate,
+        isActive
         FROM InstallmentPlan
-        Where productID = #{productID}
+        WHERE productID = #{productID}
+        <if test="variantID != null">
+            AND variantID = #{variantID}
+        </if>
+        <if test="variantID == null">
+            AND variantID IS NULL
+        </if>
     </select>
 
     <select id="getColorOfProduct" resultType="com.example.PhoneStore.domain.response.ResponseProductColor">
@@ -96,7 +101,6 @@
             productColorID,
             productID,
             colorName,
-            colorHex,
             imagePath
         FROM ProductColor
         Where productID = #{productID}
@@ -104,6 +108,7 @@
 
     <select id="getSpecificationOfProduct" resultType="com.example.PhoneStore.domain.response.ResponseProductSpecification">
         SELECT
+            specificationID,
             productID,
             specName,
             specValue
@@ -132,12 +137,22 @@
         ORDER BY customerImageID DESC
     </select>
 
+    <select id="getNews" resultType="com.example.PhoneStore.domain.response.ResponseNews">
+        SELECT
+        newID,
+        imageURL,
+        title,
+        createdAt
+        FROM News
+        ORDER BY newID DESC
+    </select>
+
     <select id="getProductStorage" resultType="com.example.PhoneStore.domain.response.ResponseStorage">
         SELECT
             PS.productStorageID,
             storageCapacity
         FROM ProductStorage PS, ProductVariant PV
-        WHERE PS.productStorageID = PV.productStorageID AND productID=#{productID}
+        WHERE PS.productStorageID = PV.productStorageID AND productID=#{productID} AND PV.isStatus = TRUE
     </select>
 
     <select id="getProductVariant" resultType="com.example.PhoneStore.domain.response.ResponseProductVariant">
@@ -146,10 +161,21 @@
             productID,
             productColorID,
             productStorageID,
-            price,
-            stock
+            price
         FROM ProductVariant
-        WHERE productID=#{productID} AND productColorID=#{productColorID} AND productStorageID=#{productStorageID}
+        WHERE productID=#{productID} AND productColorID=#{productColorID} AND productStorageID=#{productStorageID} AND isStatus = TRUE
+    </select>
+
+    <select id="getProductContent" resultType="com.example.PhoneStore.domain.response.ResponseProductContent">
+        SELECT
+            contentID,
+            productID,
+            title,
+            contentText,
+            contentImage,
+            displayOrder
+        FROM ProductContent
+        WHERE productID=#{productID}
     </select>
 
     <select id="getProductByOrderID" resultType="com.example.PhoneStore.domain.response.ResponseProductOrder">
@@ -157,7 +183,8 @@
         o.orderID,
         p.productName,
         pc.colorName,
-        ps.storageCapacity
+        ps.storageCapacity,
+        od.content
         FROM
         OrderDetail od
         JOIN `Order` o ON od.orderID = o.orderID
@@ -165,7 +192,7 @@
         JOIN Product p ON pv.productID = p.productID
         JOIN ProductColor pc ON pv.productColorID = pc.productColorID
         JOIN ProductStorage ps ON pv.productStorageID = ps.productStorageID
-        WHERE o.orderID = #{orderID};
+        WHERE o.orderID = #{orderID} AND pv.isStatus = TRUE;
     </select>
 
     <insert id="insertCustomer" keyProperty="customerID">
@@ -173,22 +200,145 @@
         VALUES (#{customerID}, #{fullName}, #{phone})
     </insert>
 
-    <select id="getLastInsertedCustomerID" resultType="int">
-        SELECT MAX(customerID) FROM Customer
-    </select>
-
     <insert id="insertOrder" keyProperty="orderID">
-        INSERT INTO `Order` (orderID, customerID, orderDate, totalAmount)
-        VALUES (#{orderID}, #{customerID}, #{orderDate}, #{totalAmount})
+        INSERT INTO `Order` (orderID, customerID, orderDate, totalAmount, orderType)
+        VALUES (#{orderID}, #{customerID}, #{orderDate}, #{totalAmount}, #{orderType})
     </insert>
-
-    <select id="getLastInsertedOrderID" resultType="int">
-        SELECT MAX(orderID) FROM `Order`
-    </select>
 
     <insert id="insertOrderDetail" keyProperty="orderDetailID">
-        INSERT INTO `OrderDetail` (orderDetailID, orderID, productID, variantID, priceAtOrder)
-        VALUES (#{orderDetailID}, #{orderID}, #{productID}, #{variantID}, #{priceAtOrder})
+        INSERT INTO `OrderDetail` (orderDetailID, orderID, productID, variantID, content, priceAtOrder, installmentPlanID)
+        VALUES (
+        #{orderDetailID},
+        #{orderID},
+        #{productID},
+        #{variantID},
+        #{content},
+        #{priceAtOrder},
+        #{installmentPlanID, jdbcType=INTEGER}
+        )
     </insert>
+
+    <insert id="createProduct" keyProperty="productID">
+        INSERT INTO Product (productID, productName, categoryID, image, price)
+        VALUES (#{productID}, #{productName}, #{categoryID}, #{image}, #{price})
+    </insert>
+
+    <insert id="createInstallmentPlan">
+        INSERT INTO InstallmentPlan (productID, variantID, planName, price, durationMonths, interestRate,
+        downPayment, monthlyPayment, totalAmount, startDate, endDate, isActive)
+        VALUES (#{productID}, #{variantID}, #{planName}, #{price}, #{durationMonths}, #{interestRate},
+        #{downPayment}, #{monthlyPayment}, #{totalAmount}, #{startDate}, #{endDate}, #{isActive})
+    </insert>
+
+    <insert id="insertProductContent" keyProperty="contentID">
+        INSERT INTO ProductContent (productID, title, contentText, contentImage, displayOrder)
+        VALUES (#{productID}, #{title}, #{contentText}, #{contentImage}, #{displayOrder})
+    </insert>
+
+    <update id="editProductContent" keyProperty="contentID">
+        UPDATE ProductContent SET
+            title = #{title},
+            contentText = #{contentText},
+            contentImage = #{contentImage},
+            displayOrder = #{displayOrder}
+        WHERE contentID = #{contentID}
+    </update>
+
+    <insert id="addProductColor" keyProperty="productColorID">
+        INSERT INTO ProductColor (productColorID, productID, colorName, imagePath)
+        VALUES (#{productColorID}, #{productID}, #{colorName}, #{imagePath})
+    </insert>
+
+    <insert id="addProductVariant" >
+        INSERT INTO ProductVariant (variantID, productID, productColorID, productStorageID, price)
+        VALUES (#{variantID}, #{productID}, #{productColorID}, #{productStorageID}, #{price})
+    </insert>
+
+    <insert id="addSpecificationForProduct" keyProperty="specificationID">
+        INSERT INTO ProductSpecification (productID, specName, specValue)
+        VALUES (#{productID}, #{specName}, #{specValue})
+    </insert>
+
+    <delete id="deleteSpecificationForProduct" parameterType="int">
+        DELETE FROM ProductSpecification WHERE specificationID = #{specificationID}
+    </delete>
+
+    <insert id="addBanner" keyProperty="bannerID">
+        INSERT INTO Banner (description, imageURL)
+        VALUES (#{description}, #{imageURL})
+    </insert>
+
+    <delete id="deleteBanner" parameterType="int">
+        DELETE FROM Banner WHERE bannerID = #{bannerID}
+    </delete>
+
+    <insert id="addCustomerImage" keyProperty="customerImageID">
+        INSERT INTO CustomerVisitImage (imageURL)
+        VALUES (#{imageURL})
+    </insert>
+
+    <delete id="deleteCustomerImage" parameterType="int">
+        DELETE FROM CustomerVisitImage WHERE customerImageID = #{customerImageID}
+    </delete>
+
+    <select id="getListOrder" resultType="com.example.PhoneStore.domain.response.ResponseOrderDetail">
+        SELECT
+        o.orderID,
+        o.customerID,
+        c.phone,
+        c.fullName AS fullName,
+        o.orderDate,
+        o.status,
+        o.orderType,
+        od.variantID,
+        p.productName,
+        od.content,
+        od.priceAtOrder,
+        ip.planName AS planName,
+        ip.durationMonths,
+        ip.monthlyPayment
+        FROM `Order` o
+        LEFT JOIN OrderDetail od ON o.orderID = od.orderID
+        LEFT JOIN Product p ON od.productID = p.productID
+        LEFT JOIN InstallmentPlan ip ON od.installmentPlanID = ip.installmentPlanID
+        LEFT JOIN Customer c ON o.customerID = c.customerID
+        ORDER BY o.orderDate DESC;
+    </select>
+
+    <select id="getListVariantByProductID" resultType="com.example.PhoneStore.domain.response.ResponseVariantByProductID">
+        SELECT
+        variantID,
+        colorName,
+        storageCapacity,
+        imagePath,
+        price
+        FROM ProductVariant PV, ProductColor PC, ProductStorage PS
+        Where
+        PV.productColorID = PC.productColorID AND PV.productStorageID = PS.productStorageID AND
+        PV.productID = #{productID} AND PV.isStatus = TRUE
+    </select>
+
+    <delete id="deleteVariant">
+        Update ProductVariant SET
+        isStatus = FALSE
+        WHERE variantID = #{variantID}
+    </delete>
+
+    <select id="getTopProduct" resultType="com.example.PhoneStore.domain.response.ResponseProduct">
+        SELECT
+        p.productID,
+        p.categoryID,
+        p.productName,
+        p.image,
+        p.description,
+        p.price,
+        p.status,
+        COUNT(od.productID) AS order_count
+        FROM Product p
+        LEFT JOIN OrderDetail od ON p.productID = od.productID
+        GROUP BY p.productID
+        ORDER BY order_count DESC
+        LIMIT 6;
+    </select>
 
 </mapper>

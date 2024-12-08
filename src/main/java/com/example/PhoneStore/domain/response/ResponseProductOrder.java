@@ -12,4 +12,5 @@ public class ResponseProductOrder {
     private String productName;
     private String colorName;
     private String storageCapacity;
+    private String content;
 }

@@ -9,11 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResponseProductVariant {
 
-    private int variantID;
-    private int productID;
-    private int productColorID;
+    private String variantID;
+    private String productID;
+    private String productColorID;
     private int productStorageID;
     private double price;
-    private int stock;
 
 }

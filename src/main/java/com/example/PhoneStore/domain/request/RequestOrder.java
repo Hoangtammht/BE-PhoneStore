@@ -14,11 +14,13 @@ public class RequestOrder {
     private String customerID;
     private String orderID;
     private String orderDetailID;
+    private String content;
     private double totalAmount;
     private int status;
-    private int productID;
-    private int variantID;
+    private String productID;
+    private String variantID;
     private double priceAtOrder;
-
+    private String orderType;
+    private Integer installmentPlanID;
 
 }

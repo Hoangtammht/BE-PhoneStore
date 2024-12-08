@@ -1,4 +1,4 @@
-package com.example.PhoneStore.domain.response;
+package com.example.PhoneStore.domain.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,13 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseProduct {
+public class RequestProduct {
     private String productID;
-    private int categoryID;
     private String productName;
+    private int categoryID;
     private String image;
-    private String description;
     private double price;
-    private int status;
-
 }

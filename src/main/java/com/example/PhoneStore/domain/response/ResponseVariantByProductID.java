@@ -7,9 +7,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseProductColor {
-    private String productColorID;
-    private String productID;
+public class ResponseVariantByProductID {
+
+    private String variantID;
     private String colorName;
+    private String storageCapacity;
     private String imagePath;
+    private double price;
+
 }

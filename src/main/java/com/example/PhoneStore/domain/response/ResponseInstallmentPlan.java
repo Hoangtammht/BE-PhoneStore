@@ -11,9 +11,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResponseInstallmentPlan {
-
-    private int productID;
+    private int installmentPlanID;
+    private String productID;
     private String planName;
+    private String variantID;
     private double price;
     private int durationMonths; //Kỳ hạn trả góp
     private double interestRate; //Lãi suất áp dụng

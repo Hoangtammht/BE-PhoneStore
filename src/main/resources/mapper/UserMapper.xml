@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.PhoneStore.dao.UserMapper">
+
+
+    <select id="findResponseUserByUserName" resultType="com.example.PhoneStore.domain.response.ResponseUser">
+        SELECT
+                userName,
+                password,
+                A.roleID
+        FROM Admin A, Role R WHERE A.roleID = R.roleID AND userName = #{userName}
+    </select>
+
+
+
+</mapper>

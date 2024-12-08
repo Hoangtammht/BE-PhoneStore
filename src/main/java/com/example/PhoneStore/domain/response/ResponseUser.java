@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseProductColor {
-    private String productColorID;
-    private String productID;
-    private String colorName;
-    private String imagePath;
+public class ResponseUser {
+    private String userName;
+    private String password;
+    private int roleID;
 }
