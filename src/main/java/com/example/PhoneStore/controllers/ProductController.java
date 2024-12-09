@@ -344,5 +344,35 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/getListQuote")
+    public ResponseEntity<List<ResponseQuote>> getListQuote() {
+        try {
+            List<ResponseQuote> responseQuotes = productService.getListQuote();
+            return ResponseEntity.ok(responseQuotes);
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+
+    @PostMapping("/insertQuote")
+    public ResponseEntity<?> insertQuote(@RequestBody RequestQuote requestQuote) {
+        try {
+            productService.insertQuote(requestQuote);
+            return ResponseEntity.ok("Create quote successfully");
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+
+    @DeleteMapping("/deleteQuote")
+    public ResponseEntity<?> deleteQuote(@RequestParam int quoteID) {
+        try {
+            productService.deleteQuote(quoteID);
+            return ResponseEntity.ok("Delete quote successfully");
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+
 
 }

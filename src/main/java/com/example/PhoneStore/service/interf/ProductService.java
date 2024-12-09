@@ -44,4 +44,10 @@ public interface ProductService {
 
     List<ResponseProduct> getTopProduct();
 
+    List<ResponseQuote> getListQuote();
+
+    void insertQuote(RequestQuote requestQuote);
+
+    void deleteQuote(int quoteID);
+
 }

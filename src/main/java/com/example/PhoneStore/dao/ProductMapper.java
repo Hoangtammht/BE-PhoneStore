@@ -70,4 +70,10 @@ public interface ProductMapper {
 
     List<ResponseProduct> getTopProduct();
 
+    List<ResponseQuote> getListQuote();
+
+    void insertQuote(RequestQuote requestQuote);
+
+    void deleteQuote(int quoteID);
+
 }

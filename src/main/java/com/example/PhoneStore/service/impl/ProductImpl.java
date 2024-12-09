@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -105,13 +106,16 @@ public class ProductImpl implements ProductService {
         sendOrderNotificationEmail(requestOrder);
     }
 
-    private void sendOrderNotificationEmail(RequestOrder requestOrder) {
+    public void sendOrderNotificationEmail(RequestOrder requestOrder) {
         SimpleMailMessage email = new SimpleMailMessage();
         ResponseProductOrder product = null;
 
         if (requestOrder.getVariantID() != null) {
             product = productMapper.getProductByOrderID(requestOrder.getOrderID());
         }
+
+        DecimalFormat formatter = new DecimalFormat("#,###,###.00");
+        String formattedPrice = formatter.format(requestOrder.getPriceAtOrder());
 
         if (product != null) {
             email.setTo("hoangtammht@gmail.com");
@@ -125,7 +129,7 @@ public class ProductImpl implements ProductService {
                     "Dung lượng: " + product.getStorageCapacity() + "\n" +
                     "Ngày đặt hàng: " + requestOrder.getOrderDate() + "\n" +
                     "Nội dung: " + requestOrder.getContent() + "\n" +
-                    "Tổng số tiền: " + requestOrder.getPriceAtOrder());
+                    "Tổng số tiền: " + formattedPrice);
         } else {
             email.setTo("hoangtammht@gmail.com");
             email.setSubject("Đơn hàng mới nhận được");
@@ -135,7 +139,7 @@ public class ProductImpl implements ProductService {
                     "Số điện thoại: " + requestOrder.getPhone() + "\n" +
                     "Ngày đặt hàng: " + requestOrder.getOrderDate() + "\n" +
                     "Nội dung: " + requestOrder.getContent() + "\n" +
-                    "Tổng số tiền: " + requestOrder.getPriceAtOrder());
+                    "Tổng số tiền: " + formattedPrice);
         }
 
         mailSender.send(email);
@@ -283,5 +287,20 @@ public class ProductImpl implements ProductService {
     @Override
     public List<ResponseProduct> getTopProduct() {
         return productMapper.getTopProduct();
+    }
+
+    @Override
+    public List<ResponseQuote> getListQuote() {
+        return productMapper.getListQuote();
+    }
+
+    @Override
+    public void insertQuote(RequestQuote requestQuote) {
+        productMapper.insertQuote(requestQuote);
+    }
+
+    @Override
+    public void deleteQuote(int quoteID) {
+        productMapper.deleteQuote(quoteID);
     }
 }

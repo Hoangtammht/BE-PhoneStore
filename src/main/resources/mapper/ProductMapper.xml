@@ -341,4 +341,21 @@
         LIMIT 6;
     </select>
 
+    <select id="getListQuote" resultType="com.example.PhoneStore.domain.response.ResponseQuote">
+        SELECT
+        quoteID,
+        quoteCategory,
+        imageUrl
+        FROM Quote
+    </select>
+
+    <insert id="insertQuote" keyProperty="quoteID">
+        INSERT INTO Quote (quoteCategory, imageUrl)
+        VALUES (#{quoteCategory}, #{imageUrl})
+    </insert>
+
+    <delete id="deleteQuote" parameterType="int">
+        DELETE FROM Quote WHERE quoteID = #{quoteID}
+    </delete>
+
 </mapper>
