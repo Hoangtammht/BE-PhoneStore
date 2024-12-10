@@ -303,4 +303,10 @@ public class ProductImpl implements ProductService {
     public void deleteQuote(int quoteID) {
         productMapper.deleteQuote(quoteID);
     }
+
+    @Override
+    public void updateStatusOfProduct(String productID, int status) {
+        productMapper.updateStatusOfProduct(productID, status);
+    }
+
 }

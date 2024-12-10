@@ -50,4 +50,6 @@ public interface ProductService {
 
     void deleteQuote(int quoteID);
 
+    void updateStatusOfProduct(String productID, int status);
+
 }

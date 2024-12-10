@@ -28,7 +28,7 @@
             price,
             status
         FROM Product
-        Where productID = #{productID}
+        Where productID = #{productID} and status != 3
     </select>
 
     <select id="getProductByCategoryID" resultType="com.example.PhoneStore.domain.response.ResponseProduct">
@@ -42,7 +42,7 @@
             status,
             createAt
         FROM Product
-        Where categoryID = #{categoryID}
+        Where categoryID = #{categoryID} and status != 3
         ORDER BY createAt DESC
     </select>
 
@@ -56,7 +56,7 @@
         price,
         status
         FROM Product
-        WHERE productName LIKE CONCAT('%', #{productName}, '%')
+        WHERE status != 3 and productName LIKE CONCAT('%', #{productName}, '%')
     </select>
 
     <select id="getPromotionOfProduct" resultType="com.example.PhoneStore.domain.response.ResponsePromotion">
@@ -336,6 +336,7 @@
         COUNT(od.productID) AS order_count
         FROM Product p
         LEFT JOIN OrderDetail od ON p.productID = od.productID
+        WHERE p.status != 3
         GROUP BY p.productID
         ORDER BY order_count DESC
         LIMIT 6;
@@ -357,5 +358,11 @@
     <delete id="deleteQuote" parameterType="int">
         DELETE FROM Quote WHERE quoteID = #{quoteID}
     </delete>
+
+    <update id="updateStatusOfProduct">
+        Update Product SET
+        status = #{status}
+        WHERE productID = #{productID}
+    </update>
 
 </mapper>

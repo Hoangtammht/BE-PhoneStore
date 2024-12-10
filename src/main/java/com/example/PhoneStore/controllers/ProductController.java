@@ -374,5 +374,15 @@ public class ProductController {
         }
     }
 
+    @PutMapping("/updateStatusOfProduct")
+    public ResponseEntity<?> updateStatusOfProduct(@RequestParam String productID, @RequestParam int status) {
+        try {
+            productService.updateStatusOfProduct(productID, status);
+            return ResponseEntity.ok("Delete delete successfully");
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+
 
 }
