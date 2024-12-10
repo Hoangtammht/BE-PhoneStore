@@ -103,7 +103,7 @@ public class ProductImpl implements ProductService {
 
         productMapper.insertOrderDetail(requestOrder.getOrderDetailID(), requestOrder.getOrderID(), requestOrder.getProductID(), requestOrder.getVariantID(), requestOrder.getContent(),requestOrder.getPriceAtOrder(), requestOrder.getInstallmentPlanID());
 
-        sendOrderNotificationEmail(requestOrder);
+//        sendOrderNotificationEmail(requestOrder);
     }
 
     public void sendOrderNotificationEmail(RequestOrder requestOrder) {
