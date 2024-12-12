@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ResponseVariantByProductID {
 
     private String variantID;
+    private String productColorID;
     private String colorName;
     private String storageCapacity;
     private String imagePath;

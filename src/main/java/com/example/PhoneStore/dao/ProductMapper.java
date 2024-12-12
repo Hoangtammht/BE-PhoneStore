@@ -68,6 +68,9 @@ public interface ProductMapper {
 
     void deleteVariant(String variant);
 
+    void deleteProductColor(String productColorID);
+
+
     List<ResponseProduct> getTopProduct();
 
     List<ResponseQuote> getListQuote();
@@ -77,5 +80,7 @@ public interface ProductMapper {
     void deleteQuote(int quoteID);
 
     void updateStatusOfProduct(String productID, int status);
+
+    void updateStatusOfOrder(String orderID, String status);
 
 }

@@ -103,7 +103,7 @@
             colorName,
             imagePath
         FROM ProductColor
-        Where productID = #{productID}
+        Where productID = #{productID} AND isStatus = TRUE
     </select>
 
     <select id="getSpecificationOfProduct" resultType="com.example.PhoneStore.domain.response.ResponseProductSpecification">
@@ -308,6 +308,7 @@
     <select id="getListVariantByProductID" resultType="com.example.PhoneStore.domain.response.ResponseVariantByProductID">
         SELECT
         variantID,
+        PC.productColorID,
         colorName,
         storageCapacity,
         imagePath,
@@ -322,6 +323,12 @@
         Update ProductVariant SET
         isStatus = FALSE
         WHERE variantID = #{variantID}
+    </delete>
+
+    <delete id="deleteProductColor">
+        Update ProductColor SET
+        isStatus = FALSE
+        WHERE productColorID = #{productColorID}
     </delete>
 
     <select id="getTopProduct" resultType="com.example.PhoneStore.domain.response.ResponseProduct">
@@ -363,6 +370,12 @@
         Update Product SET
         status = #{status}
         WHERE productID = #{productID}
+    </update>
+
+    <update id="updateStatusOfOrder">
+        Update `Order` SET
+        status = #{status}
+        WHERE orderID = #{orderID}
     </update>
 
 </mapper>

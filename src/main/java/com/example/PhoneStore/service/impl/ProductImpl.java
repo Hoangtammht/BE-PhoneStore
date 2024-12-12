@@ -280,8 +280,9 @@ public class ProductImpl implements ProductService {
     }
 
     @Override
-    public void deleteVariant(String variantID) {
+    public void deleteVariant(String variantID, String productColorID) {
         productMapper.deleteVariant(variantID);
+        productMapper.deleteProductColor(productColorID);
     }
 
     @Override
@@ -309,4 +310,8 @@ public class ProductImpl implements ProductService {
         productMapper.updateStatusOfProduct(productID, status);
     }
 
+    @Override
+    public void updateStatusOfOrder(String orderID, String status) {
+        productMapper.updateStatusOfOrder(orderID, status);
+    }
 }

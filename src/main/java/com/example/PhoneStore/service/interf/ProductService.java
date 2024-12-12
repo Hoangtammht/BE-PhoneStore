@@ -40,7 +40,7 @@ public interface ProductService {
 
     List<ResponseVariantByProductID> getListVariantByProductID(String productID);
 
-    void deleteVariant(String variantID);
+    void deleteVariant(String variantID, String productColorID);
 
     List<ResponseProduct> getTopProduct();
 
@@ -51,5 +51,7 @@ public interface ProductService {
     void deleteQuote(int quoteID);
 
     void updateStatusOfProduct(String productID, int status);
+
+    void updateStatusOfOrder(String orderID, String status);
 
 }

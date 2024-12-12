@@ -105,9 +105,9 @@ public class ProductController {
     }
 
     @GetMapping("/getInstallmentPlanOfProduct")
-    public ResponseEntity<List<ResponseInstallmentPlan>> getInstallmentPlanOfProduct(@RequestParam String productID, @RequestParam String variantID) {
+    public ResponseEntity<List<ResponseInstallmentPlan>> getInstallmentPlanOfProduct(@RequestParam String productID, @RequestParam(required = false) String variantID) {
         try {
-            List<ResponseInstallmentPlan> product = productService.getInstallmentPlanOfProduct(productID, variantID);
+            List<ResponseInstallmentPlan> product = productService.getInstallmentPlanOfProduct(productID, (variantID == null || variantID.isEmpty()) ? null : variantID);
             return ResponseEntity.ok(product);
         } catch (ApiRequestException e) {
             throw e;
@@ -325,9 +325,9 @@ public class ProductController {
     }
 
     @DeleteMapping("/deleteVariant")
-    public ResponseEntity<?> deleteVariant(@RequestParam String variantID) {
+    public ResponseEntity<?> deleteVariant(@RequestParam String variantID, @RequestParam String productColorID) {
         try {
-            productService.deleteVariant(variantID);
+            productService.deleteVariant(variantID, productColorID);
             return ResponseEntity.ok("Delete variant successfully");
         } catch (ApiRequestException e) {
             throw e;
@@ -379,6 +379,16 @@ public class ProductController {
         try {
             productService.updateStatusOfProduct(productID, status);
             return ResponseEntity.ok("Delete delete successfully");
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+
+    @PutMapping("/updateStatusOfOrder")
+    public ResponseEntity<?> updateStatusOfOrder(@RequestParam String orderID, @RequestParam String status) {
+        try {
+            productService.updateStatusOfOrder(orderID, status);
+            return ResponseEntity.ok("Update status of order successfully");
         } catch (ApiRequestException e) {
             throw e;
         }
